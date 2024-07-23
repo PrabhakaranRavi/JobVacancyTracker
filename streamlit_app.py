@@ -1,6 +1,5 @@
 import streamlit as st
 from supabase import create_client, Client
-import uuid
 
 # Access Supabase configuration from secrets
 url = st.secrets["supabase"]["url"]
@@ -10,17 +9,25 @@ supabase: Client = create_client(url, key)
 # Function to insert a new job post
 def insert_job_post(location, link, description=""):
     data = {
-        "id": str(uuid.uuid4()),
         "location": location,
         "link": link,
         "description": description
     }
-    supabase.table("job_posts").insert(data).execute()
+    try:
+        response = supabase.table("job_posts").insert(data).execute()
+        st.success("Job post added successfully!")
+        st.write("Response:", response)
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
 
 # Function to get job posts by location
 def get_job_posts(location):
-    response = supabase.table("job_posts").select("*").eq("location", location).execute()
-    return response.data
+    try:
+        response = supabase.table("job_posts").select("*").eq("location", location).execute()
+        return response.data
+    except Exception as e:
+        st.error(f"An error occurred: {e}")
+        return []
 
 # Streamlit UI
 st.title("Job Vacancies Tracker")
@@ -39,7 +46,6 @@ if choice == "Add Job Post":
     if st.button("Add"):
         if link:
             insert_job_post(location, link, description)
-            st.success("Job post added successfully!")
         else:
             st.error("Job post link is required.")
 
@@ -56,4 +62,3 @@ elif choice == "View Job Posts":
                 st.write("---")
         else:
             st.write("No job posts found for this location.")
-

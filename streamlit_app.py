@@ -2,9 +2,9 @@ import streamlit as st
 from supabase import create_client, Client
 import uuid
 
-# Supabase configuration
-url = "https://ggmsabzwvfglwkpiymzg.supabase.co"
-key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImdnbXNhYnp3dmZnbHdrcGl5bXpnIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjE3MDE4MDIsImV4cCI6MjAzNzI3NzgwMn0.tTpxh_aQbQWSiHHFPxn5rybFD2yJkl90RhbJQBOmlMI"
+# Access Supabase configuration from secrets
+url = st.secrets["supabase"]["url"]
+key = st.secrets["supabase"]["key"]
 supabase: Client = create_client(url, key)
 
 # Function to insert a new job post
